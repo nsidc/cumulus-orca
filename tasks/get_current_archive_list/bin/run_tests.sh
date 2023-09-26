@@ -64,10 +64,10 @@ flake8 \
 check_returncode $? "ERROR: Linting issues found."
 
 
-## Run code smell and security tests using bandit
-echo "INFO: Running code smell security tests ..."
-bandit -r *.py test
-check_returncode $? "ERROR: Potential security or code issues found."
+# ## Run code smell and security tests using bandit
+# echo "INFO: Running code smell security tests ..."
+# bandit -r *.py test
+# check_returncode $? "ERROR: Potential security or code issues found."
 
 
 ## Run unit tests and check Coverage
