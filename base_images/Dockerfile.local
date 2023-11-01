@@ -1,30 +1,44 @@
-FROM amazonlinux:2
+FROM amazonlinux:2023
 LABEL maintainer="Rizbi Hassan" \
-      version="1" \
+      version="2" \
       description="This image can be used to run unit & validation tests for ORCA locally."
 
-ENV NODE_VERSION="16.x"
-ENV TERRAFORM_VERSION "0.13.6"
+ENV NODE_VERSION "20.x"
+ENV TERRAFORM_VERSION "1.5.5"
+ENV PYTHON_VERSION "3.10.13"
 
 # Add NodeJS and Yarn repos & update package index
 RUN \
 curl -sL https://rpm.nodesource.com/setup_${NODE_VERSION} | bash - && \
 curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo && \
 curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm" && \
-amazon-linux-extras install epel -y && \
-yum update -y
+dnf update -y
 
-# install Python 3, pip, CLI utilities, session manager and other tools
+# install pip, Python 3.10, CLI utilities, session manager and other tools
 RUN \
-yum install -y jq gcc git make openssl wget zip unzip tar python3-devel nodejs yarn python3-pip awscli session-manager-plugin.rpm procps parallel && \
-pip3 install -q --upgrade pip --trusted-host pypi.org --trusted-host files.pythonhosted.org pydoc-markdown bandit safety flake8 black isort
+dnf install -y jq gcc git make openssl openssl-devel wget zip unzip bzip2-devel libffi-devel ncurses-devel sqlite-devel readline-devel uuid-devel libuuid-devel gdbm-devel xz-devel tar nodejs yarn awscli session-manager-plugin.rpm procps parallel && \
+dnf groupinstall -y "Development Tools" && \
+# Install Python 3.10
+wget https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz && \
+tar xvf Python-${PYTHON_VERSION}.tgz && \
+cd Python-*/ && \
+./configure --enable-optimizations --enable-loadable-sqlite-extensions --enable-ipv6 && \
+make altinstall && \
+ln -sf /usr/local/bin/python3.10 /usr/local/bin/python3 && \
+ln -sf /url/local/bin/pip3.10 /usr/local/bin/pip3 && \
+rm -f Python-${PYTHON_VERSION}.tgz && \
+rm -rf Python-${PYTHON_VERSION}
 
 # Install and configure git-secrets
 RUN \
 cd /root && \
+# Fixes issue with git-secrets instal bug
+dnf install -y which && \
 git clone https://github.com/awslabs/git-secrets.git && \
 cd git-secrets && \
 make install && \
+# Fixes issue with git-secrets instal bug
+ln -s "$(which echo)" /usr/local/bin/say && \
 git secrets --register-aws --global && \
 git secrets --install ~/.git-templates/git-secrets && \
 git config --global init.templateDir ~/.git-templates/git-secrets
