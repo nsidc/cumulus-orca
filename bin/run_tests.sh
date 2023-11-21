@@ -42,7 +42,7 @@ task_dirs=$(ls -d tasks/* | egrep -v "package")
 ## TODO: Add more logging output
 echo "Running unit tests in parallel..."
 # todo: ORCA-681: Repair parallelism and switch back to `--jobs 0`
-parallel --jobs 1 -X --halt now,fail=1 run_unit_tests ::: $task_dirs
+parallel --jobs 2 -n 1 -X --halt now,fail=1 run_unit_tests ::: $task_dirs
 
 process_return_code=$?
 echo
