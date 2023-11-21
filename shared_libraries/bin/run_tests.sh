@@ -38,7 +38,7 @@ trap 'deactivate_and_delete_venv' EXIT
 run_and_check_returncode "pip install -q --upgrade pip --trusted-host pypi.org --trusted-host files.pythonhosted.org"
 
 ## Install the requirements
-pip install -q -r requirements.txt --trusted-host pypi.org --trusted-host files.pythonhosted.org
+pip install -q -r requirements.txt --no-cache-dir --trusted-host pypi.org --trusted-host files.pythonhosted.org
 check_returncode $? "ERROR: pip install encountered an error."
 
 ## Check code formatting and styling
