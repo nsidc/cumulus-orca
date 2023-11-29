@@ -33,31 +33,31 @@ source ../../bin/common/venv_management.sh
 ## -----------------------------------------------------------------------------
 ## Create the build directory. Remove it if it exists.
 echo "INFO: Creating build directory ..."
-if [ -d build ]; then
-    rm -rf build
+if [ -d build6 ]; then
+    rm -rf build6
 fi
 
-run_and_check_returncode "mkdir build"
-trap 'rm -rf build' EXIT
+run_and_check_returncode "mkdir build6"
+trap 'rm -rf build6' EXIT
 
 run_and_check_returncode "create_and_activate_venv"
-trap 'deactivate_and_delete_venv;rm -rf build;' EXIT
+trap 'deactivate_and_delete_venv;rm -rf build6;' EXIT
 run_and_check_returncode "pip install -q --upgrade pip --trusted-host pypi.org --trusted-host files.pythonhosted.org"
 
 ## Install the requirements
-pip install -q -t build -r requirements.txt --trusted-host pypi.org --trusted-host files.pythonhosted.org
+pip install -q -t build6 -r requirements.txt --trusted-host pypi.org --trusted-host files.pythonhosted.org
 check_returncode $? "ERROR: pip install encountered an error."
 
 ## Copy the lambda files to build
 echo "INFO: Creating the Lambda package ..."
-cp *.py build/
+cp *.py build6/
 check_returncode $? "ERROR: Failed to copy lambda files to build directory."
 
 ## Copy the schema files to build
 echo "INFO:  Copying the input, output and config schemas..."
-cp -r schemas/ build/
+cp -r schemas/ build6/
 check_returncode $? "ERROR: Failed to copy schema files to build directory."
 ## Create the zip archive
-cd build
-trap 'cd -;deactivate_and_delete_venv;rm -rf build;' EXIT
+cd build6
+trap 'cd -;deactivate_and_delete_venv;rm -rf build6;' EXIT
 run_and_check_returncode "zip -qr ../extract_filepaths_for_granule.zip ."

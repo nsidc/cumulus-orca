@@ -33,23 +33,23 @@ source ../../bin/common/venv_management.sh
 ## -----------------------------------------------------------------------------
 ## Create the build directory. Remove it if it exists.
 echo "INFO: Creating build directory ..."
-if [ -d build ]; then
-    rm -rf build
+if [ -d build5 ]; then
+    rm -rf build5
 fi
 
-run_and_check_returncode "mkdir build"
-trap 'rm -rf build' EXIT
+run_and_check_returncode "mkdir build5"
+trap 'rm -rf build5' EXIT
 
 run_and_check_returncode "create_and_activate_venv"
-trap 'deactivate_and_delete_venv;rm -rf build;' EXIT
+trap 'deactivate_and_delete_venv;rm -rf build5;' EXIT
 run_and_check_returncode "pip install -q --upgrade pip --trusted-host pypi.org --trusted-host files.pythonhosted.org"
 
 ## Install the requirements
-pip install -q -t build -r requirements.txt --trusted-host pypi.org --trusted-host files.pythonhosted.org
+pip install -q -t build5 -r requirements.txt --trusted-host pypi.org --trusted-host files.pythonhosted.org
 check_returncode $? "ERROR: pip install encountered an error."
 
 # Install the aws-lambda psycopg2 libraries
-mkdir -p build/psycopg2
+mkdir -p build5/psycopg2
 
 ##TODO: Adjust build scripts to put shared packages needed under a task/build/packages directory.
 ##      and copy the packages from there.
@@ -65,16 +65,16 @@ if [ ! -d "../package/awslambda-psycopg2" ]; then
     run_and_check_returncode "git clone https://github.com/jkehler/awslambda-psycopg2.git ../package/awslambda-psycopg2"
 fi
 
-cp ../package/awslambda-psycopg2/psycopg2-3.9/* build/psycopg2/
+cp ../package/awslambda-psycopg2/psycopg2-3.9/* build5/psycopg2/
 check_returncode $? "ERROR: Unable to install psycopg2."
 
 
 ## Copy the lambda files to build
 echo "INFO: Creating the Lambda package ..."
-cp *.py build/
+cp *.py build5/
 check_returncode $? "ERROR: Failed to copy lambda files to build directory."
 
 ## Create the zip archive
-cd build
-trap 'cd -;deactivate_and_delete_venv;rm -rf build;' EXIT
+cd build5
+trap 'cd -;deactivate_and_delete_venv;rm -rf build5;' EXIT
 run_and_check_returncode "zip -qr ../delete_old_reconcile_jobs.zip ."

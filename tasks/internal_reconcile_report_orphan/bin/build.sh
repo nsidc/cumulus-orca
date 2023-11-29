@@ -33,23 +33,23 @@ source ../../bin/common/venv_management.sh
 ## -----------------------------------------------------------------------------
 ## Create the build directory. Remove it if it exists.
 echo "INFO: Creating build directory ..."
-if [ -d build ]; then
-    rm -rf build
+if [ -d build10 ]; then
+    rm -rf build10
 fi
 
-run_and_check_returncode "mkdir build"
-trap 'rm -rf build' EXIT
+run_and_check_returncode "mkdir build10"
+trap 'rm -rf build10' EXIT
 
 run_and_check_returncode "create_and_activate_venv"
-trap 'deactivate_and_delete_venv;rm -rf build;' EXIT
+trap 'deactivate_and_delete_venv;rm -rf build10;' EXIT
 run_and_check_returncode "pip install -q --upgrade pip --trusted-host pypi.org --trusted-host files.pythonhosted.org"
 
 ## Install the requirements
-pip install -q -t build -r requirements.txt --trusted-host pypi.org --trusted-host files.pythonhosted.org
+pip install -q -t build10 -r requirements.txt --trusted-host pypi.org --trusted-host files.pythonhosted.org
 check_returncode $? "ERROR: pip install encountered an error."
 
 # Install the aws-lambda psycopg2 libraries
-mkdir -p build/psycopg2
+mkdir -p build10/psycopg2
 
 ##TODO: Adjust build scripts to put shared packages needed under a task/build/packages directory.
 ##      and copy the packages from there.
@@ -65,21 +65,21 @@ if [ ! -d "../package/awslambda-psycopg2" ]; then
     run_and_check_returncode "git clone https://github.com/jkehler/awslambda-psycopg2.git ../package/awslambda-psycopg2"
 fi
 
-cp ../package/awslambda-psycopg2/psycopg2-3.9/* build/psycopg2/
+cp ../package/awslambda-psycopg2/psycopg2-3.9/* build10/psycopg2/
 check_returncode $? "ERROR: Unable to install psycopg2."
 
 
 ## Copy the lambda files to build
 echo "INFO: Copying src Python files ..."
-find ./src -name '*.py' | xargs cp --parents -t build/
+find ./src -name '*.py' | xargs cp --parents -t build10/
 check_returncode $? "ERROR: Failed to copy src files to build directory."
 
 ## Copy the schema files to build
 echo "INFO: Copying schema files ..."
-cp -r schemas/ build/
+cp -r schemas/ build10/
 check_returncode $? "ERROR: Failed to copy schema files to build directory."
 
 ## Create the zip archive
-cd build
-trap 'cd -;deactivate_and_delete_venv;rm -rf build;' EXIT
+cd build10
+trap 'cd -;deactivate_and_delete_venv;rm -rf build10;' EXIT
 run_and_check_returncode "zip -qr ../internal_reconcile_report_orphan.zip ."
