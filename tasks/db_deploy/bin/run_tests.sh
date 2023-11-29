@@ -94,7 +94,7 @@ echo "INFO: Running unit and coverage tests ..."
 # docs seen here https://docs.aws.amazon.com/lambda/latest/dg/lambda-dg.pdf
 export AWS_REGION="us-west-2"
 
-coverage run --source ${file_list} -m pytest --ignore=build
+coverage run --source ${file_list} -m pytest
 check_returncode $? "ERROR: Unit tests encountered failures."
 
 # Unit tests expected to cover minimum of 80%.

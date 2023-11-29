@@ -74,7 +74,7 @@ check_returncode $? "ERROR: Potential security or code issues found."
 echo "INFO: Running unit and coverage tests ..."
 
 # Currently just running unit tests until we fix/support large tests
-coverage run --source=copy_from_archive -m pytest --ignore=build
+coverage run --source=copy_from_archive -m pytest
 check_returncode $? "ERROR: Unit tests encountered failures."
 
 # Unit tests expected to cover minimum of 80%.
