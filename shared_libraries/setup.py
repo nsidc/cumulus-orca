@@ -5,10 +5,11 @@ import re
 from setuptools import setup, find_packages
 import sys
 import orca_shared.__init__ as library_list
+from pathlib import Path
 
 # Borrowed from pip at https://github.com/pypa/pip/blob/62c27dee45625e1b63d1e023b0656310f276e050/setup.py#L11-L15
-here = os.path.abspath(os.path.dirname(__file__))
-
+#here = os.path.abspath(os.path.dirname(__file__))
+here = os.chdir(Path(__file__).parent.absolute())
 
 def read(*parts):
     # intentionally *not* adding an encoding option to open, See:
