@@ -110,7 +110,7 @@ def task(task_input: Dict[str, Any], config: Dict[str, Any]):
                 else:
                     matching_regex = next(
                         filter(
-                            lambda key: re.compile(key).match(file_name), regex_buckets
+                            lambda key: re.compile(key).search(file_name), regex_buckets
                         ),
                         None,
                     )
